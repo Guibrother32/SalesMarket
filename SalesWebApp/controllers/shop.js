@@ -1,5 +1,5 @@
 const Product = require('../models/product');
-
+const Cart = require('../models/cart');
 
 const productsSelected = [];
 var totalPrice = 0;
@@ -18,33 +18,38 @@ exports.getProducts = (req, res, next) => {
 }
 exports.getSpecificProd = (req, res, next) => {
   const id = req.params.prodId;
-
   // Product.getSpecificProd(id,product =>{
   //   console.log(product);
   // });
-
   Product.getSpecificProd(id, product => {
     res.render('shop/product-detail', { prod: product, pageTitle: 'Product Detail', path: '/products' });
   });
-
 };
 
 exports.showCart = (req,res,next) =>{
-  res.render('shop/cart', { prods: productsSelected, pageTitle: 'Your Cart', path: '/cart' });
+  Cart.showCart(products =>{
+    res.render('shop/cart', { prods: products, pageTitle: 'Your Cart', path: '/cart' });
+  });
 };
 
 exports.addCart = (req, res, next) => {
+  // const id = req.params.prodId;
+  // console.log(id);
+  // Product.getSpecificProd(id, product => {
+  //   totalPrice = product.priceCons + totalPrice;
+  //   if(!productsSelected.find(p => p.id === product.id)){ //if product has same id as any of inserted itens than you dont push it into cart array
+  //     productsSelected.push(product);
+  //   }
+  //   res.redirect('/cart');
+
+  // });
+
   const id = req.params.prodId;
-  console.log(id);
-  Product.getSpecificProd(id, product => {
-    totalPrice = product.priceCons + totalPrice;
-    if(!productsSelected.find(p => p.id === product.id)){ //if product has same id as any of inserted itens than you dont push it into cart array
-      productsSelected.push(product);
-    }
-    res.redirect('/cart');
+  Product.getSpecificProd(id, (product) =>{
 
+    Cart.addProduct(id, product.priceCons);
   });
-
+  res.redirect('/cart');
 };
 
 exports.removeCart = (req,res,next) =>{
