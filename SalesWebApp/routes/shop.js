@@ -6,11 +6,11 @@ const shopController = require('../controllers/shop');
 
 router.get('/', shopController.getIndex);
 
-router.get('/cart', shopController.showCart);
+router.post('/cart/remove/', shopController.postRemoveProduct);
 
-router.post('/cart/remove/:prodIdRemove', shopController.removeCart);
+router.get('/cart/',shopController.getShowCart);
 
-router.post('/cart/:prodId', shopController.addCart);
+router.post('/cart/', shopController.addCart);
 
 router.get('/products', shopController.getProducts);
 

@@ -20,9 +20,10 @@
                     <h2 class="product__price">$<%= product.priceCons %></h2>
                     <p class="product__description"><%= product.descriptionCons %></p>
                 </div>
-                <form action="/cart/remove/<%=product.id%>" method="POST">
+                <form action="/cart/remove/" method="POST">
                     <div class="card__actions">
-                        <button href="/cart/remove/<%=product.id%>" class="btn" type="submit">Remove</button>
+                        <button class="btn" type="submit">Remove</button>
+                        <input type="hidden" name="id" value="<%=product.id%>">
                     </div>
                 </form>
             </article>

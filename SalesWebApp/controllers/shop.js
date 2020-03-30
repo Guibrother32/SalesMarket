@@ -2,7 +2,7 @@ const Product = require('../models/product');
 const Cart = require('../models/cart');
 
 const productsSelected = [];
-var totalPrice = 0;
+
 
 
 exports.getProducts = (req, res, next) => {
@@ -26,25 +26,16 @@ exports.getSpecificProd = (req, res, next) => {
   });
 };
 
-exports.showCart = (req,res,next) =>{
+exports.getShowCart = (req,res,next) =>{
   Cart.showCart(products =>{
+    console.log(products);
     res.render('shop/cart', { prods: products, pageTitle: 'Your Cart', path: '/cart' });
   });
 };
 
 exports.addCart = (req, res, next) => {
-  // const id = req.params.prodId;
-  // console.log(id);
-  // Product.getSpecificProd(id, product => {
-  //   totalPrice = product.priceCons + totalPrice;
-  //   if(!productsSelected.find(p => p.id === product.id)){ //if product has same id as any of inserted itens than you dont push it into cart array
-  //     productsSelected.push(product);
-  //   }
-  //   res.redirect('/cart');
-
-  // });
-
-  const id = req.params.prodId;
+  const id = req.body.id;
+  console.log(id);
   Product.getSpecificProd(id, (product) =>{
 
     Cart.addProduct(id, product.priceCons);
@@ -81,6 +72,15 @@ exports.getIndex = (req, res, next) => {
 
 exports.getOrders = (req, res, next) => {
   res.render('shop/orders', { pageTitle: 'Orders', path: '/orders' })
+};
+
+exports.postRemoveProduct = (req,res,next) =>{
+  const id = req.body.id;
+  console.log(id);
+  Product.getSpecificProd(id, product =>{
+    Cart.removeProduct(id,product.priceCons);
+  });
+  res.redirect('/');
 };
 
 

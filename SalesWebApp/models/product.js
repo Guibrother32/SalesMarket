@@ -13,23 +13,43 @@ const getProductsFromFile = (cb) => {
 };
 
 module.exports = class Product {
-    constructor(title, imageUrl, price, description) {
+    constructor(id, title, imageUrl, price, description) {
+        this.id = id;
         this.titleCons = title;
         this.imageUrlCons = imageUrl;
         this.priceCons = price;
         this.descriptionCons = description;
-        this.id = Math.random().toString();
     }
 
     save() {
         getProductsFromFile(products => {
+            if (this.id === null) {
+                this.id = Math.random().toString();
+                products.push(this); // to use 'this' here you need to use an arrow function, otherwise this will not reference to the class temporary object// this here is the product.save() called at postAddProduct at products.js 
+                fs.writeFile(p, JSON.stringify(products), (err) => { //stringfy parses it to string
+                    console.log(err);
+                });
+            }
+            else {
+                const indexToUpdateProduct = products.findIndex(prod => prod.id === this.id);
+                const updatedProducts = [...products];
+                updatedProducts[indexToUpdateProduct] = this;
+                // products[indexToUpdateProduct] = this;
+                fs.writeFile(p, JSON.stringify(updatedProducts), (err) => { //stringfy parses it to string
+                    console.log(err);
+                });
+            }
 
-            products.push(this); // to use 'this' here you need to use an arrow function, otherwise this will not reference to the class temporary object// this here is the product.save() called at postAddProduct at products.js 
-            fs.writeFile(p, JSON.stringify(products), (err) => { //stringfy parses it to string
+        });
+    }
+    static delete(id){
+        getProductsFromFile(products =>{
+            const updatedList = products.filter(prod => prod.id !== id)
+            fs.writeFile(p, JSON.stringify(updatedList), (err) => { //stringfy parses it to string
                 console.log(err);
             });
         });
-    }
+    };
 
     static fetchAll(cb) { //static?
         getProductsFromFile(cb);
@@ -41,6 +61,8 @@ module.exports = class Product {
             cb(product);
         });
     }
+
+
 
 };
 
