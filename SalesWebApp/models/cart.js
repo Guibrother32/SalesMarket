@@ -40,11 +40,13 @@ module.exports = class Cart {
             if (!err) {
                 cart = JSON.parse(fileContent);
             }
-            
-            const updateCart = {...cart};
-            updateCart.products = updateCart.products.filter(prod => prod.id !== id); //filter all the products that matches with that id, remember, filter takes all, find just find the first that matches
 
+            const updateCart = { ...cart };
+            updateCart.products = updateCart.products.filter(prod => prod.id !== id); //filter all the products that matches with that id, remember, filter takes all, find just find the first that matches
             const product = cart.products.find(prod => prod.id === id); // to find out how many products was added at total price so then we can take it out
+            if(!product){
+                return; //if you try to delete at admin and its not in the cart, this prevents it to crash
+            }
             updateCart.totalPrice = updateCart.totalPrice - product.qty * prodPrice;
 
             updateCart.products = updateCart.products.filter(prod => prod.id !== id);
@@ -55,38 +57,37 @@ module.exports = class Cart {
         });
     };
 
-
-
-
     static showCart = (cb) => {
         fs.readFile(p, (err, fileContent) => {
-
-            let cart = { products: [], totalPrice: 0 };
-            let productsOnCart = { ...cart };
-
-            if (!err) {
-                cart = JSON.parse(fileContent);
+            const cart = JSON.parse(fileContent);
+            if (err) {
+                cb(null);
+            } else {
+                cb(cart);
             }
-
-
-
-            for (let index = 0; index < cart.products.length; index++) {
-                Product.getSpecificProd(cart.products[index].id, product => {
-                    if (product) {
-                        
-                        productsOnCart.products = [...productsOnCart.products,product];
-                    }
-                });
-                productsOnCart.totalPrice = cart.totalPrice;
-
-            }
-            cb(productsOnCart);
-
-
         });
-
     }
-
-
 };
 
+
+
+
+            // for (let index = 0; index < cart.products.length; index++) {
+            //     Product.getSpecificProd(cart.products[index].id, product => {
+            //         if (product) {
+            //             productsOnCart.products.push(product);
+            //         }
+            //     });
+            //     productsOnCart.totalPrice = cart.totalPrice;
+
+            // }
+
+            // Product.fetchAll(products =>{
+            //     for (const product of products) {
+            //         let productCheck = cart.products.find(prod => prod.id === product.id)
+            //         if(productCheck){
+            //             productsOnCart.push({productData:product,qty:productCheck.qty});
+            //         }
+            //     }
+            // });
+            // cb(productsOnCart);

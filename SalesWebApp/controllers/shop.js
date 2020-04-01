@@ -26,30 +26,41 @@ exports.getSpecificProd = (req, res, next) => {
   });
 };
 
-exports.getShowCart = (req,res,next) =>{
-  Cart.showCart(products =>{
-    console.log(products);
-    res.render('shop/cart', { prods: products, pageTitle: 'Your Cart', path: '/cart' });
+exports.getShowCart = (req, res, next) => {
+  // Cart.showCart(products =>{
+  //   console.log(products);
+  //   res.render('shop/cart', { prods: products, pageTitle: 'Your Cart', path: '/cart' });
+  // });
+  Cart.showCart(cartData => {
+    Product.fetchAll(products => {
+      const productsOnCart = [];
+      for (const product of products) {
+        let productCheck = cartData.products.find(prod => prod.id === product.id)
+        if (productCheck) {
+          productsOnCart.push({ productData: product, qty: productCheck.qty });
+        }
+      }
+      res.render('shop/cart', { prods: productsOnCart, pageTitle: 'Your Cart', path: '/cart' });
+    });
   });
 };
 
-exports.addCart = (req, res, next) => {
+exports.postAddCart = (req, res, next) => {
   const id = req.body.id;
-  console.log(id);
-  Product.getSpecificProd(id, (product) =>{
+  Product.getSpecificProd(id, (product) => {
 
     Cart.addProduct(id, product.priceCons);
   });
   res.redirect('/cart');
 };
 
-exports.removeCart = (req,res,next) =>{
+exports.removeCart = (req, res, next) => {
   const id = req.params.prodIdRemove;
   console.log(productsSelected);
-  Product.getSpecificProd(id,product =>{
+  Product.getSpecificProd(id, product => {
     const index = productsSelected.findIndex(p => p.id === id);
     console.log('this is index' + index);
-    productsSelected.splice(index,1);
+    productsSelected.splice(index, 1);
   });
   res.redirect('/cart');
 };
@@ -74,14 +85,17 @@ exports.getOrders = (req, res, next) => {
   res.render('shop/orders', { pageTitle: 'Orders', path: '/orders' })
 };
 
-exports.postRemoveProduct = (req,res,next) =>{
+exports.postRemoveProduct = (req, res, next) => {
   const id = req.body.id;
   console.log(id);
-  Product.getSpecificProd(id, product =>{
-    Cart.removeProduct(id,product.priceCons);
+  Product.getSpecificProd(id, product => {
+    Cart.removeProduct(id, product.priceCons);
   });
   res.redirect('/');
 };
+
+
+
 
 
 

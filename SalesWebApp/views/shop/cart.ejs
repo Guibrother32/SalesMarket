@@ -11,19 +11,21 @@
             <% for (let product of prods) { %>
             <article class="card product-item">
                 <header class="card__header">
-                    <h1 class="product__title"><%= product.titleCons %></h1>
+                    <h1 class="product__title"><%= product.productData.titleCons %></h1>
                 </header>
                 <div class="card__image">
-                    <img src="<%= product.imageUrlCons %>" alt="<%= product.titleCons %>">
+                    <img src="<%= product.productData.imageUrlCons %>" alt="<%= product.productData.titleCons %>">
                 </div>
                 <div class="card__content">
-                    <h2 class="product__price">$<%= product.priceCons %></h2>
-                    <p class="product__description"><%= product.descriptionCons %></p>
+                    <h2 class="product__price">$<%= product.productData.priceCons %></h2>
+                    <p class="product__description"><%= product.productData.descriptionCons %></p>
+                    <hr>
+                    <p class="product__description">QTY: <%= product.qty%></p>
                 </div>
                 <form action="/cart/remove/" method="POST">
                     <div class="card__actions">
                         <button class="btn" type="submit">Remove</button>
-                        <input type="hidden" name="id" value="<%=product.id%>">
+                        <input type="hidden" name="id" value="<%=product.productData.id%>">
                     </div>
                 </form>
             </article>
